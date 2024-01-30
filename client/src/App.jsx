@@ -1,7 +1,15 @@
 import React from 'react';
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import { Register, Login, HomeLayout } from "./pages";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Register, Login, HomeLayout,DashboardLayout } from "./pages";
+
+export const checkDefaultTheme = () => {
+  const isDarkTheme = localStorage.getItem("darkTheme") === "true";
+  document.body.classList.toggle("dark-theme", isDarkTheme);
+  return isDarkTheme;
+};
+
+checkDefaultTheme();
 
 
 const router = createBrowserRouter([
@@ -21,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "dashboard",
+        element: <DashboardLayout />,
       },
     ],
   },
