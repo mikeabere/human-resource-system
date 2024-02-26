@@ -60,7 +60,7 @@ export const validateRegisterInput = withValidationErrors([
     .isEmail()
     .withMessage("invalid email format")
     .custom(async (email) => {
-      const user = await User.findOne({ email });
+      const user = await House.findOne({ email });
       if (user) {
         throw new BadRequestError("email already exists");
       }
@@ -91,7 +91,7 @@ export const validateUpdateUserInput = withValidationErrors([
     .isEmail()
     .withMessage("invalid email format")
     .custom(async (email, { req }) => {
-      const user = await User.findOne({ email });
+      const user = await House.findOne({ email });
       if (user && user._id.toString() !== req.user.userId) {
         throw new Error("email already exists");
       }
