@@ -10,8 +10,8 @@ export const getCurrentUser = async (req, res) => {
 
 export const getApplicationStats = async (req, res) => {
   const users = await User.countDocuments();
-  const jobs = await House.countDocuments();
-  res.status(StatusCodes.OK).json({ users, jobs });
+  const houses = await House.countDocuments();
+  res.status(StatusCodes.OK).json({ users, houses });
 };
 
 export const updateUser = async (req, res) => {
