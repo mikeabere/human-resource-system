@@ -7,9 +7,12 @@ import morgan from "morgan";
 import mongoose from "mongoose";
 
 //routes
-import houseRouter from "./routes/houseRouter.js";
+import jobRouter from "./routes/houseRouter.js";
+import authRouter from "./routes/authRouter.js";
+import userRouter from "./routes/userRouter.js";
 
 //middleware
+import { authenticateUser } from "./middleware/authMiddleware.js";
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -17,7 +20,9 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(express.json());
 
-app.use("/api/v1/houses", houseRouter);
+app.use("/api/v1/jobs", authenticateUser, jobRouter);
+app.use("/api/v1/users", authenticateUser, userRouter);
+app.use("/api/v1/auth", authRouter);
 
 const port = process.env.PORT || 5500;
 
