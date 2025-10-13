@@ -1,28 +1,74 @@
 import mongoose from "mongoose";
+import bcrypt  from "bcryptjs";
 
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password: String,
-  lastName: {
-    type: String,
-    default: "lastName",
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        "Please provide a valid email",
+      ],
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [6, "Password must be at least 6 characters"],
+      select: false,
+    },
+    role: {
+      type: String,
+      enum: ["admin", "hr_manager", "employee"],
+      default: "employee",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    employee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Employee",
+    },
+    lastLogin: {
+      type: Date,
+    },
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
-  location: {
-    type: String,
-    default: "my city",
-  },
-  role: {
-    type: String,
-    enum: ["user", "admin"],
-    default: "user",
-  },
+  {
+    timestamps: true,
+  }
+);
+
+// Hash password before saving
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
 });
 
-UserSchema.methods.toJSON = function () {
-  var obj = this.toObject();
-  delete obj.password;
-  return obj;
+// Compare password method
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.model("User", UserSchema);
+// Check if password was changed after JWT was issued
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
+};
+
+export default  mongoose.model("User", userSchema);
