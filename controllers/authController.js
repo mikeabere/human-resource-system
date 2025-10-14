@@ -1,48 +1,201 @@
-import { StatusCodes } from "http-status-codes";
-import User from "../models/UserModel.js";
-import { hashPassword, comparePassword } from "../utils/passwordUtils.js";
-import { UnauthenticatedError } from "../errors/customError.js";
-import { createJWT } from "../utils/tokenUtils.js";
+const User = require("../models/User");
+const Employee = require("../models/Employee");
+const { sendTokenResponse } = require("../utils/generateToken");
+const { sendWelcomeEmail } = require("../utils/emailService");
 
-export const register = async (req, res) => {
-  const isFirstAccount = (await User.countDocuments()) === 0;
-  req.body.role = isFirstAccount ? "admin" : "user";
+// @desc    Register user (Admin only)
+// @route   POST /api/auth/register
+// @access  Private/Admin
+exports.register = async (req, res) => {
+  try {
+    const { email, password, role, employeeId } = req.body;
 
-  const hashedPassword = await hashPassword(req.body.password);
-  req.body.password = hashedPassword;
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User with this email already exists",
+      });
+    }
 
-  const user = await User.create(req.body);
-  res.status(StatusCodes.CREATED).json({ msg: "user created" });
+    // If employeeId provided, link to employee
+    let employee = null;
+    if (employeeId) {
+      employee = await Employee.findById(employeeId);
+      if (!employee) {
+        return res.status(404).json({
+          success: false,
+          message: "Employee not found",
+        });
+      }
+    }
+
+    // Create user
+    const user = await User.create({
+      email,
+      password,
+      role: role || "employee",
+      employee: employee ? employee._id : null,
+    });
+
+    // Update employee with user reference
+    if (employee) {
+      employee.user = user._id;
+      await employee.save();
+    }
+
+    // Send welcome email (optional)
+    try {
+      await sendWelcomeEmail(
+        email,
+        employee ? employee.firstName : "User",
+        password
+      );
+    } catch (emailError) {
+      console.error("Failed to send welcome email:", emailError);
+    }
+
+    sendTokenResponse(user, 201, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
-export const login = async (req, res) => {
-  // check if user exists
-  // check if password is correct
+// @desc    Login user
+// @route   POST /api/auth/login
+// @access  Public
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({ email: req.body.email });
+    // Validate email & password
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide email and password",
+      });
+    }
 
-  const isValidUser =
-    user && (await comparePassword(req.body.password, user.password));
-  if (!isValidUser) throw new UnauthenticatedError("invalid credentials");
+    // Check for user
+    const user = await User.findOne({ email })
+      .select("+password")
+      .populate("employee");
 
-  const token = createJWT({ userId: user._id, role: user.role });
-  console.log(token);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
 
-  const oneDay = 1000 * 60 * 60 * 24;
+    // Check if user is active
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: "Your account has been deactivated",
+      });
+    }
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    expires: new Date(Date.now() + oneDay),
-    secure: process.env.NODE_ENV === "production",
-  });
+    // Check if password matches
+    const isMatch = await user.comparePassword(password);
 
-  res.status(StatusCodes.OK).json({ msg: "user logged in" });
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    // Update last login
+    user.lastLogin = Date.now();
+    await user.save({ validateBeforeSave: false });
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 
-export const logout = (req, res) => {
-  res.cookie("token", "logout", {
-    httpOnly: true,
-    expires: new Date(Date.now()),
-  });
-  res.status(StatusCodes.OK).json({ msg: "user logged out!" });
+// @desc    Get current logged in user
+// @route   GET /api/auth/me
+// @access  Private
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate("employee");
+
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Logout user
+// @route   POST /api/auth/logout
+// @access  Private
+exports.logout = async (req, res) => {
+  try {
+    // In JWT, we don't store tokens server-side
+    // Client should delete the token
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// @desc    Update password
+// @route   PUT /api/auth/update-password
+// @access  Private
+exports.updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide current and new password",
+      });
+    }
+
+    const user = await User.findById(req.user.id).select("+password");
+
+    // Check current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    // Update password
+    user.password = newPassword;
+    user.passwordChangedAt = Date.now();
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
