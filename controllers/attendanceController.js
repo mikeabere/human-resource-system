@@ -296,4 +296,12 @@ exports.getAttendanceSummary = async (req, res) => {
   try {
     const { month, year } = req.query;
     
-    const startDate = new Date(year || new Date().getFullYear
+    const startDate = new Date(year || new Date().getFullYear);//will look into this
+  }
+   catch(error) {
+      res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+}
