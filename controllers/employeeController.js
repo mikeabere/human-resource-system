@@ -1,10 +1,10 @@
-import Employee from "../models/Employee";
-import User from "../models/User";
+import Employee from "../models/EmployeeModel.js";
+import User from "../models/UserModel.js";
 
 // @desc    Get all employees
 // @route   GET /api/employees
 // @access  Private
-exports.getEmployees = async (req, res) => {
+export const getEmployees = async (req, res) => {
   try {
     const {
       department,
@@ -56,7 +56,7 @@ exports.getEmployees = async (req, res) => {
 // @desc    Get single employee
 // @route   GET /api/employees/:id
 // @access  Private
-exports.getEmployee = async (req, res) => {
+export const getEmployee = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id)
       .populate("user", "email role isActive")
@@ -84,7 +84,7 @@ exports.getEmployee = async (req, res) => {
 // @desc    Create employee
 // @route   POST /api/employees
 // @access  Private/Admin/HR
-exports.createEmployee = async (req, res) => {
+export const createEmployee = async (req, res) => {
   try {
     const employeeData = req.body;
 
@@ -116,7 +116,7 @@ exports.createEmployee = async (req, res) => {
 // @desc    Update employee
 // @route   PUT /api/employees/:id
 // @access  Private/Admin/HR
-exports.updateEmployee = async (req, res) => {
+export const updateEmployee = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id);
 
@@ -146,7 +146,7 @@ exports.updateEmployee = async (req, res) => {
 // @desc    Delete employee
 // @route   DELETE /api/employees/:id
 // @access  Private/Admin
-exports.deleteEmployee = async (req, res) => {
+export const deleteEmployee = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id);
 
@@ -179,7 +179,7 @@ exports.deleteEmployee = async (req, res) => {
 // @desc    Get employee statistics
 // @route   GET /api/employees/stats/overview
 // @access  Private/Admin/HR
-exports.getEmployeeStats = async (req, res) => {
+export const getEmployeeStats = async (req, res) => {
   try {
     const totalEmployees = await Employee.countDocuments({ status: "active" });
     const departmentStats = await Employee.aggregate([
@@ -210,7 +210,7 @@ exports.getEmployeeStats = async (req, res) => {
 // @desc    Get my profile (for logged-in employee)
 // @route   GET /api/employees/me/profile
 // @access  Private
-exports.getMyProfile = async (req, res) => {
+export const getMyProfile = async (req, res) => {
   try {
     if (!req.user.employee) {
       return res.status(404).json({
@@ -239,7 +239,7 @@ exports.getMyProfile = async (req, res) => {
 // @desc    Update my profile
 // @route   PUT /api/employees/me/profile
 // @access  Private
-exports.updateMyProfile = async (req, res) => {
+export const updateMyProfile = async (req, res) => {
   try {
     if (!req.user.employee) {
       return res.status(404).json({

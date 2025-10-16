@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
 
-const generateToken = (userId) => {
+export const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE || "7d",
   });
 };
 
-const sendTokenResponse = (user, statusCode, res) => {
+export const sendTokenResponse = (user, statusCode, res) => {
   const token = generateToken(user._id);
 
   // Remove password from output
@@ -24,4 +24,4 @@ const sendTokenResponse = (user, statusCode, res) => {
   });
 };
 
-module.exports = { generateToken, sendTokenResponse };
+

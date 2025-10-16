@@ -1,9 +1,9 @@
-import User from "../models/User";
+import User from "../models/UserModel.js";
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Private/Admin
-exports.getUsers = async (req, res) => {
+export const getUsers = async (req, res) => {
   try {
     const { role, isActive, page = 1, limit = 10 } = req.query;
 
@@ -37,7 +37,7 @@ exports.getUsers = async (req, res) => {
 // @desc    Get single user
 // @route   GET /api/users/:id
 // @access  Private/Admin
-exports.getUser = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).populate("employee");
 
@@ -63,7 +63,7 @@ exports.getUser = async (req, res) => {
 // @desc    Update user
 // @route   PUT /api/users/:id
 // @access  Private/Admin
-exports.updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     const { email, role, isActive } = req.body;
 
@@ -98,7 +98,7 @@ exports.updateUser = async (req, res) => {
 // @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
-exports.deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
 
@@ -126,7 +126,7 @@ exports.deleteUser = async (req, res) => {
 // @desc    Deactivate user account
 // @route   PUT /api/users/:id/deactivate
 // @access  Private/Admin
-exports.deactivateUser = async (req, res) => {
+export const deactivateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
 
@@ -156,7 +156,7 @@ exports.deactivateUser = async (req, res) => {
 // @desc    Activate user account
 // @route   PUT /api/users/:id/activate
 // @access  Private/Admin
-exports.activateUser = async (req, res) => {
+export const activateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
 

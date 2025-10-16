@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const {
+import {
   checkIn,
   checkOut,
   getMyAttendance,
@@ -9,9 +9,9 @@ const {
   updateAttendance,
   deleteAttendance,
   getAttendanceSummary,
-} = require("../controllers/attendanceController");
-const { protect } = require("../middleware/auth");
-const { isHROrAdmin, isAdmin } = require("../middleware/roleCheck");
+} from "../controllers/attendanceController.js";
+import { protect } from "../middleware/auth.js";
+import { isHROrAdmin, isAdmin } from "../middleware/roleCheck.js";
 
 // All routes are protected
 router.use(protect);
@@ -31,4 +31,4 @@ router
   .put(isHROrAdmin, updateAttendance)
   .delete(isAdmin, deleteAttendance);
 
-module.exports = router;
+export default router;

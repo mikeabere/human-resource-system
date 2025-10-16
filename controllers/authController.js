@@ -1,12 +1,12 @@
-const User = require("../models/User");
-const Employee = require("../models/Employee");
-const { sendTokenResponse } = require("../utils/generateToken");
-const { sendWelcomeEmail } = require("../utils/emailService");
+import User from "../models/UserModel.js";
+import Employee from "../models/EmployeeModel.js";
+import { sendTokenResponse } from "../utils/generateToken.js";
+import { sendWelcomeEmail } from "../utils/emailService.js";
 
 // @desc    Register user (Admin only)
 // @route   POST /api/auth/register
 // @access  Private/Admin
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { email, password, role, employeeId } = req.body;
 
@@ -68,7 +68,7 @@ exports.register = async (req, res) => {
 // @desc    Login user
 // @route   POST /api/auth/login
 // @access  Public
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -126,7 +126,7 @@ exports.login = async (req, res) => {
 // @desc    Get current logged in user
 // @route   GET /api/auth/me
 // @access  Private
-exports.getMe = async (req, res) => {
+export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate("employee");
 
@@ -145,7 +145,7 @@ exports.getMe = async (req, res) => {
 // @desc    Logout user
 // @route   POST /api/auth/logout
 // @access  Private
-exports.logout = async (req, res) => {
+export const logout = async (req, res) => {
   try {
     // In JWT, we don't store tokens server-side
     // Client should delete the token
@@ -164,7 +164,7 @@ exports.logout = async (req, res) => {
 // @desc    Update password
 // @route   PUT /api/auth/update-password
 // @access  Private
-exports.updatePassword = async (req, res) => {
+export const updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 

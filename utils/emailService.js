@@ -33,7 +33,7 @@ const sendEmail = async (options) => {
 };
 
 // Send welcome email
-const sendWelcomeEmail = async (email, name, password) => {
+export const sendWelcomeEmail = async (email, name, password) => {
   const message = `
     <h2>Welcome to HRMS, ${name}!</h2>
     <p>Your account has been created successfully.</p>
@@ -51,7 +51,7 @@ const sendWelcomeEmail = async (email, name, password) => {
 };
 
 // Send leave status update email
-const sendLeaveStatusEmail = async (employee, leave, status) => {
+export const sendLeaveStatusEmail = async (employee, leave, status) => {
   const message = `
     <h2>Leave Request ${status}</h2>
     <p>Dear ${employee.firstName} ${employee.lastName},</p>
@@ -77,8 +77,4 @@ const sendLeaveStatusEmail = async (employee, leave, status) => {
   });
 };
 
-module.exports = {
-  sendEmail,
-  sendWelcomeEmail,
-  sendLeaveStatusEmail,
-};
+

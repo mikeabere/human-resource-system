@@ -1,10 +1,10 @@
-import Attendance from '../models/Attendance';
-import Employee from '../models/Employee';
+import Attendance from '../models/AttendanceModel.js';
+import Employee from '../models/EmployeeModel.js';
 
 // @desc    Check in
 // @route   POST /api/attendance/checkin
 // @access  Private
-exports.checkIn = async (req, res) => {
+export const checkIn = async (req, res) => {
   try {
     if (!req.user.employee) {
       return res.status(400).json({
@@ -52,7 +52,7 @@ exports.checkIn = async (req, res) => {
 // @desc    Check out
 // @route   PUT /api/attendance/checkout
 // @access  Private
-exports.checkOut = async (req, res) => {
+export const checkOut = async (req, res) => {
   try {
     if (!req.user.employee) {
       return res.status(400).json({
@@ -99,7 +99,7 @@ exports.checkOut = async (req, res) => {
 // @desc    Get my attendance records
 // @route   GET /api/attendance/my-records
 // @access  Private
-exports.getMyAttendance = async (req, res) => {
+export const getMyAttendance = async (req, res) => {
   try {
     if (!req.user.employee) {
       return res.status(400).json({
@@ -147,7 +147,7 @@ exports.getMyAttendance = async (req, res) => {
 // @desc    Get all attendance records
 // @route   GET /api/attendance
 // @access  Private/Admin/HR
-exports.getAllAttendance = async (req, res) => {
+export const getAllAttendance = async (req, res) => {
   try {
     const { employeeId, startDate, endDate, status, page = 1, limit = 10 } = req.query;
 
@@ -188,7 +188,7 @@ exports.getAllAttendance = async (req, res) => {
 // @desc    Get attendance by employee ID
 // @route   GET /api/attendance/employee/:employeeId
 // @access  Private/Admin/HR
-exports.getEmployeeAttendance = async (req, res) => {
+export const getEmployeeAttendance = async (req, res) => {
   try {
     const { startDate, endDate, page = 1, limit = 10 } = req.query;
 
@@ -235,7 +235,7 @@ exports.getEmployeeAttendance = async (req, res) => {
 // @desc    Update attendance record
 // @route   PUT /api/attendance/:id
 // @access  Private/Admin/HR
-exports.updateAttendance = async (req, res) => {
+export const updateAttendance = async (req, res) => {
   try {
     const attendance = await Attendance.findById(req.params.id);
 
@@ -264,7 +264,7 @@ exports.updateAttendance = async (req, res) => {
 // @desc    Delete attendance record
 // @route   DELETE /api/attendance/:id
 // @access  Private/Admin
-exports.deleteAttendance = async (req, res) => {
+export const deleteAttendance = async (req, res) => {
   try {
     const attendance = await Attendance.findById(req.params.id);
 
@@ -292,16 +292,45 @@ exports.deleteAttendance = async (req, res) => {
 // @desc    Get attendance summary
 // @route   GET /api/attendance/summary/stats
 // @access  Private/Admin/HR
-exports.getAttendanceSummary = async (req, res) => {
+export const getAttendanceSummary = async (req, res) => {
   try {
     const { month, year } = req.query;
-    
-    const startDate = new Date(year || new Date().getFullYear);//will look into this
-  }
-   catch(error) {
-      res.status(500).json({
+
+    const startDate = new Date(
+      year || new Date().getFullYear(),
+      month ? month - 1 : 0,
+      1
+    );
+    const endDate = new Date(
+      year || new Date().getFullYear(),
+      month ? month : 12,
+      0
+    );
+
+    const summary = await Attendance.aggregate([
+      {
+        $match: {
+          date: { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+          totalHours: { $sum: "$workHours" },
+          totalOvertime: { $sum: "$overtime" },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: summary,
+    });
+  } catch (error) {
+    res.status(500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
-}
+};

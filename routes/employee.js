@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const {
+import {
   getEmployees,
   getEmployee,
   createEmployee,
@@ -9,9 +9,9 @@ const {
   getEmployeeStats,
   getMyProfile,
   updateMyProfile,
-} = require("../controllers/employeeController");
-const { protect } = require("../middleware/auth");
-const { isHROrAdmin } = require("../middleware/roleCheck");
+} from "../controllers/employeeController.js";
+import { protect } from "../middleware/auth.js";
+import { isHROrAdmin } from "../middleware/roleCheck.js";
 
 // All routes are protected
 router.use(protect);
@@ -31,4 +31,4 @@ router
   .put(isHROrAdmin, updateEmployee)
   .delete(isHROrAdmin, deleteEmployee);
 
-module.exports = router;
+export default router;

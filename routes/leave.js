@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const {
+import {
   applyLeave,
   getMyLeaves,
   getAllLeaves,
@@ -9,9 +9,9 @@ const {
   rejectLeave,
   cancelLeave,
   getLeaveBalance,
-} = require("../controllers/leaveController");
-const { protect } = require("../middleware/auth");
-const { isHROrAdmin } = require("../middleware/roleCheck");
+} from "../controllers/leaveController.js";
+import { protect } from "../middleware/auth.js";
+import { isHROrAdmin } from "../middleware/roleCheck.js";
 
 // All routes are protected
 router.use(protect);
@@ -28,4 +28,4 @@ router.get("/:id", getLeave);
 router.put("/:id/approve", isHROrAdmin, approveLeave);
 router.put("/:id/reject", isHROrAdmin, rejectLeave);
 
-module.exports = router;
+export default router;

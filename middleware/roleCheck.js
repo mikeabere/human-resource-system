@@ -1,5 +1,5 @@
 // Middleware to authorize based on user roles
-const authorize = (...roles) => {
+export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
@@ -20,7 +20,7 @@ const authorize = (...roles) => {
 };
 
 // Check if user is admin
-const isAdmin = (req, res, next) => {
+export const isAdmin = (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();
   } else {
@@ -32,7 +32,7 @@ const isAdmin = (req, res, next) => {
 };
 
 // Check if user is HR manager or admin
-const isHROrAdmin = (req, res, next) => {
+export const isHROrAdmin = (req, res, next) => {
   if (
     req.user &&
     (req.user.role === "admin" || req.user.role === "hr_manager")
@@ -47,7 +47,7 @@ const isHROrAdmin = (req, res, next) => {
 };
 
 // Check if user can access their own data
-const isOwnerOrAdmin = (req, res, next) => {
+export const isOwnerOrAdmin = (req, res, next) => {
   const requestedUserId = req.params.id || req.params.userId;
   const currentUserId = req.user._id.toString();
   const isAdmin = req.user.role === "admin";
@@ -63,9 +63,3 @@ const isOwnerOrAdmin = (req, res, next) => {
   }
 };
 
-module.exports = {
-  authorize,
-  isAdmin,
-  isHROrAdmin,
-  isOwnerOrAdmin,
-};
