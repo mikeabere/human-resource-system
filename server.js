@@ -19,12 +19,12 @@ import leaveRoutes from './routes/leave.js';
 import performanceRoutes from './routes/performance.js';
 
 // Mount Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/employees', employeeRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/leaves', leaveRoutes);
-app.use('/api/performance', performanceRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/employees', employeeRoutes);
+app.use('/api/v1/attendance', attendanceRoutes);
+app.use('/api/v1/leaves', leaveRoutes);
+app.use('/api/v1/performance', performanceRoutes);
 
 //middleware
 // import { authenticateUser } from "./middleware/authMiddleware.js";
