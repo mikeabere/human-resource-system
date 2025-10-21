@@ -1,0 +1,59 @@
+.leaves-page {
+  padding: 2rem;
+}
+
+.leave-balance-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--white);
+  padding: 1.5rem;
+}
+
+.balance-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.balance-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.balance-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.leave-type {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .leaves-page {
+    padding: 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}

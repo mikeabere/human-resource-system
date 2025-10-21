@@ -1,0 +1,29 @@
+.performance-page {
+  padding: 2rem;
+}
+
+.review-type {
+  text-transform: capitalize;
+  font-weight: 500;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rating-stars {
+  font-size: 1rem;
+}
+
+.rating-value {
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+@media (max-width: 768px) {
+  .performance-page {
+    padding: 1rem;
+  }
+}

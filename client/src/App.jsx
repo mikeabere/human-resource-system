@@ -1,83 +1,45 @@
-import React from 'react';
+import { useState } from "react";
+import { BrowserRouter, useLocation } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
+import Navbar from "./components/common/Navbar";
+import Sidebar from "./components/common/Sidebar";
+import AppRoutes from "./routes/AppRoutes";
+import "./App.css";
 
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import {
-   Register,
-   Login,
-   HomeLayout,
-   DashboardLayout, 
-   AddJob,
-   Stats, 
-   AllJobs,
-   Profile,
-   Admin, 
-      } from "./pages";
+function AppContent() {
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-export const checkDefaultTheme = () => {
-  const isDarkTheme = localStorage.getItem("darkTheme") === "true";
-  document.body.classList.toggle("dark-theme", isDarkTheme);
-  return isDarkTheme;
-};
+  const isLoginPage = location.pathname === "/login";
+  const showLayout = isAuthenticated && !isLoginPage;
 
-checkDefaultTheme();
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomeLayout />,
-    errorElement: <Error />,
-    children: [
-      {
-        index: true,
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
-      },
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "dashboard",
-        element: <DashboardLayout />,
-        children: [
-          {
-            index: true,
-            element: <AddJob />,
-          },
-          {
-            path: "stats",
-            element: <Stats />,
-          },
-          {
-            path: "all-jobs",
-            element: <AllJobs />,
-          },
-
-          {
-            path: "profile",
-            element: <Profile />,
-          },
-          {
-            path: "admin",
-            element: <Admin />,
-          },
-        ],
-      },
-    ],
-  },
-]);
-
-function App() {
-  
+  const closeSidebar = () => {
+    setSidebarOpen(false);
+  };
 
   return (
-    
-      <RouterProvider router={router} />
-    
+    <div className="app">
+      {showLayout && <Navbar toggleSidebar={toggleSidebar} />}
+      {showLayout && (
+        <Sidebar isOpen={sidebarOpen} closeSidebar={closeSidebar} />
+      )}
+      <main className={showLayout ? "main-content" : "main-content-full"}>
+        <AppRoutes />
+      </main>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 
