@@ -26,8 +26,23 @@ app.use('/api/v1/attendance', attendanceRoutes);
 app.use('/api/v1/leaves', leaveRoutes);
 app.use('/api/v1/performance', performanceRoutes);
 
-//middleware
-// import { authenticateUser } from "./middleware/authMiddleware.js";
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || 'Internal Server Error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// 404 Handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found'
+  });
+});
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -37,9 +52,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use("/api/v1/jobs", authenticateUser, jobRouter);
-// app.use("/api/v1/users", authenticateUser, userRouter);
-// app.use("/api/v1/auth", authRouter);
+
 
 const port = process.env.PORT || 5500;
 
