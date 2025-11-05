@@ -10,6 +10,10 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 connectDB();
 
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Import Routes
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
@@ -48,9 +52,7 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
 
 
 
