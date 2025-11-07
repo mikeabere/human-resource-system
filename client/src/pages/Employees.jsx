@@ -17,6 +17,7 @@ const Employees = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [alert, setAlert] = useState(null);
   const [formData, setFormData] = useState({
+    employeeId:"",
     firstName: "",
     lastName: "",
     email: "",
@@ -71,6 +72,7 @@ const Employees = () => {
   const handleEdit = (employee) => {
     setSelectedEmployee(employee);
     setFormData({
+      employeeId:employee.employeeId,
       firstName: employee.firstName,
       lastName: employee.lastName,
       email: employee.email,
@@ -101,6 +103,7 @@ const Employees = () => {
 
   const resetForm = () => {
     setFormData({
+      employeeId: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -225,6 +228,14 @@ const Employees = () => {
       >
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
+            <Input
+              label="Employee Id"
+              name="employeeId"
+              value={formData.employeeId}
+              onChange={handleInputChange}
+              required
+            />
+
             <Input
               label="First Name"
               name="firstName"

@@ -2,7 +2,7 @@ import api from "./api";
 
 export const authService = {
   login: async (email, password) => {
-    const response = await api.post("/auth/login", { email, password });
+    const response = await api.post("/v1/auth/login", { email, password });
     if (response.data.success) {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -12,7 +12,7 @@ export const authService = {
 
   logout: async () => {
     try {
-      await api.post("/auth/logout");
+      await api.post("v1/auth/logout");
     } finally {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
@@ -20,12 +20,12 @@ export const authService = {
   },
 
   getMe: async () => {
-    const response = await api.get("/auth/me");
+    const response = await api.get("/v1/auth/me");
     return response.data;
   },
 
   updatePassword: async (currentPassword, newPassword) => {
-    const response = await api.put("/auth/update-password", {
+    const response = await api.put("/v1/auth/update-password", {
       currentPassword,
       newPassword,
     });
