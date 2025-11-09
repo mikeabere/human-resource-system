@@ -1,9 +1,15 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Sidebar.css";
+import { useState } from "react";
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
   const { isAdmin, isHR } = useAuth();
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  function closeSidebar(){
+    setShowSidebar(true);
+  }
 
   const menuItems = [
     {

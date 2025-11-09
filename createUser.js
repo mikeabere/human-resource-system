@@ -16,9 +16,9 @@ const createUser = async () => {
     }
 
     const user = await User.create({
-      email: "john.doe@company.com",
-      password: "employee123",
-      role: "employee",
+      email: "eric@gmail.com",
+      password: "admin23",
+      role: "admin",
       employee: employee._id,
       isActive: true,
     });
