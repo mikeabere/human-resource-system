@@ -11,7 +11,7 @@ import connectDB from "./config/db.js";
 connectDB();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json());// express middleware
 app.use(express.urlencoded({ extended: true }));
 
 // Import Routes
