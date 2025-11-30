@@ -8,7 +8,7 @@ mongoose.connect(process.env.MONGO_URL);
 
 const createUser = async () => {
   try {
-    const employee = await Employee.findOne({ email: "john.doe@company.com" });
+    const employee = await Employee.findOne({ email: "john.doe@company.com" }); //test user
 
     if (!employee) {
       console.log("❌ Employee not found");
