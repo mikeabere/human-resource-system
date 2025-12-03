@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import * as dotenv from "dotenv"; //file should be removed
 dotenv.config();
 import mongoose from "mongoose";
 import User from "./models/UserModel.js";
