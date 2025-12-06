@@ -10,7 +10,7 @@ const createAdmin = async () => {
   try {
     const admin = await User.create({
       email: "admin@hrms.com",
-      password: "admin123",
+      password: "admin123", //file should be removed
       role: "admin",
       isActive: true,
     });
