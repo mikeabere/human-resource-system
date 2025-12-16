@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import User from "./models/UserModel.js";
 
 
-mongoose.connect(process.env.MONGO_URL);
+mongoose.connect(process.env.MONGO_URL); //mongodb conn
 
 const createAdmin = async () => {
   try {
