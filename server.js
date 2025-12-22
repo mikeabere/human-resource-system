@@ -5,7 +5,7 @@ dotenv.config();
 import express from "express";
 const app = express();
 
-import morgan from "morgan";
+import morgan from "morgan"; //http status logger
 import cors from "cors";
 import connectDB from "./config/db.js";
 connectDB();
