@@ -3,7 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-const app = express();
+const app = express(); //initialize express app
 
 import morgan from "morgan"; //http status logger
 import cors from "cors";
