@@ -1,4 +1,4 @@
-import "express-async-errors";
+import "express-async-errors"; //prevent express errors
 import * as dotenv from "dotenv";
 dotenv.config();
 
