@@ -10,7 +10,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 connectDB();
 
-app.use(cors());
+app.use(cors()); //handles cross-origin between backend and front end
 app.use(express.json());// express middleware
 app.use(express.urlencoded({ extended: true }));
 
